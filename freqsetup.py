@@ -5,18 +5,14 @@ Created on Mon Aug  4 13:03:26 2025
 
 @author: jfrothin
 """
+#import pandas as pd
+import numpy as np
 
-spec_dict_GHz = {"none":{},
-                            'ra-protected-band':{"H": [1.4, 1.427],
-                                                 "OH":[1.6606, 1.6700],
-                                                 "S-band":[2.690,2.700],
-                                                 "C-band":[4.990,5.000],
-                                                 "X-band":[10.68,10.7],
-                                                 "Ku-band":[15.35,15.4],
-                                                 "K-band1":[22.21,22.5],
-                                                 "K-band2":[23.6,24.0],
-                                                 "Ka-band":[31.3,31.8],
-                                                 "Q-band":[42.5,43.5]
-                                                 }
-                                }
-                            }
+spec_dict_GHz = {'none':{}, 'receivers': {}}
+
+rcvr_data = np.loadtxt('receivers.csv', delimiter=',',skiprows=1, dtype=np.ndarray)
+
+for i in range(0,len(rcvr_data)):
+    spec_dict_GHz['receivers'][rcvr_data[i,0]] = [float(rcvr_data[i,1]), float(rcvr_data[i,2])]
+
+print(spec_dict_GHz['receivers'])

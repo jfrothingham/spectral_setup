@@ -1,0 +1,15 @@
+Receiver,Minimum frequency,Maximum frequency,Focus,Polarization,Beams
+RcvrPF_1,0.29,0.92,Prime,linear/circular,1
+Rcvr1_2,1.15,1.73,Gregorian,linear/circular,1
+Rcvr2_3,1.73,2.6,Gregorian,linear/circular,1
+Rcvr4_6,3.95,5.85,Gregorian,linear/circular,1
+Rcvr8_10,8.0,10.1,Gregorian,circular,1
+Rcvr12_18,12.0,15.4,Gregorian,circular,2
+Rcvr18_26,18.0,26.5,Gregorian,circular,4
+Rcvr40_52,40.0,52.0,Gregorian,circular,4
+Rcvr26_40,26.0,40.0,Gregorian,circular,2
+RcvrPF_2,0.91,1.23,Prime,linear/circular,1
+RcvrArray18_26,18.0,26.5,Gregorian,circular,7
+Rcvr68_92,67.0,94.0,Gregorian,linear/circular,2
+RcvrArray75_115,75.0,116.0,Gregorian,linear,16
+Rcvr_2500,1.15,1.73,Gregorian,linear/circular,1
