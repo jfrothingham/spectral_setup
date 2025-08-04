@@ -31,12 +31,27 @@ for i in range(0,len(rcvr_data)):
 
 #%% Plotting
 
-toplot = rcvr_range_ghz_dict['Rcvr1_2']
+toplot = ['Rcvr1_2', 'Rcvr2_3', 'Rcvr4_6']
 
-fig, ax = plt.subplots()
+#toplot = rcvr_range_ghz_dict.keys()
 
-for rcvr in rcvr_range_ghz_dict.keys():
+fig, ax1 = plt.subplots()
+ax1.set_xlabel('Frequecy in GHz')
+ax1.set_xscale('log')
+ax1.set_ylabel('arbitrary units')
+
+i=0
+for rcvr in toplot:
     x1, x2 = rcvr_range_ghz_dict[rcvr]
-    ax.fill_betweenx([0,1], x1, x2)
+    bw = x2-x1
+    #ax1.fill_betweenx([0,1], x1, x2, label=rcvr)
+    #ax1.plot([x1,x2], [0, 0], label=rcvr)
+    #ax1.text(x1, 0, rcvr)
+    
+    ax1.vlines([x1, x2], [0,0], [1,1],ls='--',color='k',alpha=0.5)
+    ax1.text((bw/2)+x1, 0, rcvr, ha='center')
+    
+    i+=1
 
-ax.plot()
+ax1.plot()
+#ax1.legend()
