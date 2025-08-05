@@ -26,9 +26,58 @@ for i in range(0,len(rcvr_data)):
 
 #print(rcvr_range_ghz_dict)
 
+#%% Set up data structure - spectral windows
+
+# would like this to mimic structure of above - read from a file rather than hardcode
+spec_win_ghz_dict = {
+    'test': [1.44,1.5,2],
+    'HI': [1.42,0.02344,10],
+    'fail': [200,1.5,42]
+    }
+
+#win_data = np.loadtxt('specwin.csv', delimiter=',',skiprows=1, dtype=np.ndarray) # issues with filetype
+
 #%% Set up data structures - VEGAS modes
  # to do later - will need to pull values from GBT Proposer's and Observer's Guides
+ 
 
+#%% Define function to determine receiver from spectral window
+def rcvr_select(specwin_dict, rcvr_dict):
+    """
+    
+
+    Parameters
+    ----------
+    specwin_dict : TYPE
+        DESCRIPTION.
+    rcvr_dict : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    None.
+
+    """
+    rcvr_return = []
+    
+    for entry in specwin_dict.keys():
+        cf = specwin_dict[entry][0]
+        failure=True
+        for rcvr in rcvr_dict.keys():
+            rxlow, rxhi = rcvr_dict[rcvr]
+            if cf > rxlow and cf < rxhi:
+                failure=False
+                if rcvr not in rcvr_return: rcvr_return.append(rcvr)
+                
+        if failure is True:
+            print("uh oh! spectral window", entry, " with central frequency", cf, "GHz is not within any known receiver range")
+            
+    return rcvr_return
+
+#%% Define custom plotting method
+
+ #%%% Scratch work
+print(rcvr_select(spec_win_ghz_dict, rcvr_range_ghz_dict))
 #%% Plotting
 
 toplot = ['Rcvr1_2', 'Rcvr2_3', 'Rcvr4_6']
@@ -40,18 +89,16 @@ ax1.set_xlabel('Frequecy in GHz')
 ax1.set_xscale('log')
 ax1.set_ylabel('arbitrary units')
 
-i=0
+
 for rcvr in toplot:
-    x1, x2 = rcvr_range_ghz_dict[rcvr]
-    bw = x2-x1
+    rx1, rx2 = rcvr_range_ghz_dict[rcvr]
+    rxbw = rx2-rx1
     #ax1.fill_betweenx([0,1], x1, x2, label=rcvr)
     #ax1.plot([x1,x2], [0, 0], label=rcvr)
     #ax1.text(x1, 0, rcvr)
     
-    ax1.vlines([x1, x2], [0,0], [1,1],ls='--',color='k',alpha=0.5)
-    ax1.text((bw/2)+x1, 0, rcvr, ha='center')
+    ax1.vlines([rx1, rx2], [0,0], [1,1],ls='--',color='k',alpha=0.5)
+    ax1.text((rxbw/2)+rx1, 0, rcvr, ha='center')
     
-    i+=1
-
 ax1.plot()
 #ax1.legend()
