@@ -19,7 +19,7 @@ import os
 
 rcvr_range_ghz_dict = {}
 
-rcvr_data = np.loadtxt('receivers.csv', delimiter=',',skiprows=1, dtype=np.ndarray)
+rcvr_data = np.loadtxt('receivers.csv', delimiter=',', skiprows=1, max_rows=13, type=np.ndarray) # skip first row and last row (UWBR)
 
 for i in range(0,len(rcvr_data)):
     rcvr_range_ghz_dict[rcvr_data[i,0]] = [float(rcvr_data[i,1]), float(rcvr_data[i,2])]
@@ -30,9 +30,9 @@ for i in range(0,len(rcvr_data)):
 
 # would like this to mimic structure of above - read from a file rather than hardcode
 spec_win_ghz_dict = {
-    'test': [1.44,1.5,2],
-    'HI': [1.42,0.02344,10],
-    'fail': [200,1.5,42]
+    'test': [1.44,0.1875,5],
+    'HI': [1.42,0.02344,10]#,
+#    'fail': [200,1.5,42]
     }
 
 #win_data = np.loadtxt('specwin.csv', delimiter=',',skiprows=1, dtype=np.ndarray) # issues with filetype
@@ -44,21 +44,22 @@ spec_win_ghz_dict = {
 #%% Define function to determine receiver from spectral window
 def rcvr_select(specwin_dict, rcvr_dict):
     """
+    Determine corresponding receiver(s) from list of spectral windows
     
-
     Parameters
     ----------
-    specwin_dict : TYPE
+    specwin_dict : dict
         DESCRIPTION.
-    rcvr_dict : TYPE
+    rcvr_dict : dict
         DESCRIPTION.
 
     Returns
     -------
-    None.
+    rcvr_return : list
+        List of unique receivers that the provided spectral windows fall within
 
     """
-    rcvr_return = []
+    rcvr_return = {}
     
     for entry in specwin_dict.keys():
         cf = specwin_dict[entry][0]
@@ -67,7 +68,7 @@ def rcvr_select(specwin_dict, rcvr_dict):
             rxlow, rxhi = rcvr_dict[rcvr]
             if cf > rxlow and cf < rxhi:
                 failure=False
-                if rcvr not in rcvr_return: rcvr_return.append(rcvr)
+                if rcvr not in rcvr_return.keys(): rcvr_return[rcvr] = rcvr_dict[rcvr]
                 
         if failure is True:
             print("uh oh! spectral window", entry, " with central frequency", cf, "GHz is not within any known receiver range")
@@ -75,9 +76,74 @@ def rcvr_select(specwin_dict, rcvr_dict):
     return rcvr_return
 
 #%% Define custom plotting method
+def plot_obs(ax, plot_rcvr=True, rcvr_dict="none", plot_spect=True, specwind_dict="none", plot_line=True, line_dict="none", legend=True):
+    """
+    
+
+    Parameters
+    ----------
+    ax : TYPE
+        DESCRIPTION.
+    plot_rcvr : TYPE, optional
+        DESCRIPTION. The default is True.
+    rcvr_dict : TYPE, optional
+        DESCRIPTION. The default is "none".
+    plot_spect : TYPE, optional
+        DESCRIPTION. The default is True.
+    specwind_dict : TYPE, optional
+        DESCRIPTION. The default is "none".
+    plot_line : TYPE, optional
+        DESCRIPTION. The default is True.
+    line_dict : TYPE, optional
+        DESCRIPTION. The default is "none".
+
+    Returns
+    -------
+    None.
+
+    """
+    if plot_spect:
+        if specwind_dict == "none":
+            print("No spectral windows to plot")
+        else:
+            for entry in specwind_dict:
+                cf, bw, mode = specwind_dict[entry]
+                wx1 = cf - (0.5*bw)
+                wx2 = cf + (0.5*bw)
+                ax.fill_between([wx1, wx2],[1,1])
+                ax.plot([wx1,wx2], [0, 0], label=entry)
+        
+    if plot_rcvr:
+        if rcvr_dict == "none":
+            print("No receiver ranges to plot")
+        else:
+            for rx in rcvr_dict:
+                rx1, rx2 = rcvr_range_ghz_dict[rx]
+                rxbw = rx2-rx1
+                ax.vlines([rx1, rx2], [0,0], [1,1], ls='--',color='k',alpha=0.5)
+                ax.text(rx1, 0, rx)
+                
+    if plot_line:
+        if line_dict == "none":
+            print("No spectral lines to plot")
+            
+        else:
+            for line in line_dict:
+                l1 = line_dict[line]
+                ax.vlines(l1, 1, label=line)
+                
+    if legend:
+        ax.legend()
+        
+    return
 
  #%%% Scratch work
-print(rcvr_select(spec_win_ghz_dict, rcvr_range_ghz_dict))
+fig, ax1 = plt.subplots()
+
+rcvrs = rcvr_select(spec_win_ghz_dict, rcvr_range_ghz_dict)
+
+plot_obs(ax1, plot_rcvr=True, rcvr_dict=rcvrs, plot_spect=True, specwind_dict=spec_win_ghz_dict, plot_line=True, line_dict="none", legend=True)
+
 #%% Plotting
 
 toplot = ['Rcvr1_2', 'Rcvr2_3', 'Rcvr4_6']
