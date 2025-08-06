@@ -19,7 +19,7 @@ import os
 
 rcvr_range_ghz_dict = {}
 
-rcvr_data = np.loadtxt('receivers.csv', delimiter=',', skiprows=1, max_rows=13, type=np.ndarray) # skip first row and last row (UWBR)
+rcvr_data = np.loadtxt('receivers.csv', delimiter=',', skiprows=1, max_rows=13, dtype=np.ndarray) # skip first row and last row (UWBR)
 
 for i in range(0,len(rcvr_data)):
     rcvr_range_ghz_dict[rcvr_data[i,0]] = [float(rcvr_data[i,1]), float(rcvr_data[i,2])]
@@ -30,12 +30,18 @@ for i in range(0,len(rcvr_data)):
 
 # would like this to mimic structure of above - read from a file rather than hardcode
 spec_win_ghz_dict = {
-    'test': [1.44,0.1875,5],
     'HI': [1.42,0.02344,10]#,
+    'test': [1.44,0.1875,5],
 #    'fail': [200,1.5,42]
     }
 
 #win_data = np.loadtxt('specwin.csv', delimiter=',',skiprows=1, dtype=np.ndarray) # issues with filetype
+
+#%% Set up data structure - spectral lines
+spec_line_ghz_dict = {
+    'HI 1420MHz': 1.4#,
+    #'water': 22.24
+    }
 
 #%% Set up data structures - VEGAS modes
  # to do later - will need to pull values from GBT Proposer's and Observer's Guides
@@ -76,7 +82,7 @@ def rcvr_select(specwin_dict, rcvr_dict):
     return rcvr_return
 
 #%% Define custom plotting method
-def plot_obs(ax, plot_rcvr=True, rcvr_dict="none", plot_spect=True, specwind_dict="none", plot_line=True, line_dict="none", legend=True):
+def plot_obs(ax, plot_rcvr=True, rcvr_dict="none", plot_spect=True, specwind_dict="none", plot_line=True, line_dict="none", legend=True, ploty=1):
     """
     
 
@@ -110,8 +116,8 @@ def plot_obs(ax, plot_rcvr=True, rcvr_dict="none", plot_spect=True, specwind_dic
                 cf, bw, mode = specwind_dict[entry]
                 wx1 = cf - (0.5*bw)
                 wx2 = cf + (0.5*bw)
-                ax.fill_between([wx1, wx2],[1,1])
-                ax.plot([wx1,wx2], [0, 0], label=entry)
+                ax.fill_between([wx1, wx2],[ploty,ploty], alpha=0.5, label=entry)
+                #ax.plot([wx1,wx2], [ploty/2, ploty/2], label=entry)
         
     if plot_rcvr:
         if rcvr_dict == "none":
@@ -120,7 +126,7 @@ def plot_obs(ax, plot_rcvr=True, rcvr_dict="none", plot_spect=True, specwind_dic
             for rx in rcvr_dict:
                 rx1, rx2 = rcvr_range_ghz_dict[rx]
                 rxbw = rx2-rx1
-                ax.vlines([rx1, rx2], [0,0], [1,1], ls='--',color='k',alpha=0.5)
+                ax.vlines([rx1, rx2], [0,0], [ploty,ploty], ls='--',color='k',alpha=0.75)
                 ax.text(rx1, 0, rx)
                 
     if plot_line:
@@ -130,7 +136,7 @@ def plot_obs(ax, plot_rcvr=True, rcvr_dict="none", plot_spect=True, specwind_dic
         else:
             for line in line_dict:
                 l1 = line_dict[line]
-                ax.vlines(l1, 1, label=line)
+                ax.vlines(l1, 0, ploty, label=line)
                 
     if legend:
         ax.legend()
@@ -142,7 +148,7 @@ fig, ax1 = plt.subplots()
 
 rcvrs = rcvr_select(spec_win_ghz_dict, rcvr_range_ghz_dict)
 
-plot_obs(ax1, plot_rcvr=True, rcvr_dict=rcvrs, plot_spect=True, specwind_dict=spec_win_ghz_dict, plot_line=True, line_dict="none", legend=True)
+plot_obs(ax1, plot_rcvr=True, rcvr_dict=rcvrs, plot_spect=True, specwind_dict=spec_win_ghz_dict, plot_line=True, line_dict=spec_line_ghz_dict)
 
 #%% Plotting
 
