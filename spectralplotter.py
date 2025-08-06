@@ -17,8 +17,10 @@ import os
 #%% Set up data structures - receiver ranges
 # receiver data downloaded from https://alda.gb.nrao.edu/receiver/receivers (internal GBO tool)
 
+# name: [minimum frequency in GHz, maximum frequency in GHz]
 rcvr_range_ghz_dict = {}
 
+#[name, minimum frequency in GHz, maximum frequency in GHz, prime focus or gregorian, polarization, number of beams]
 rcvr_data = np.loadtxt('receivers.csv', delimiter=',', skiprows=1, max_rows=13, dtype=np.ndarray) # skip first row and last row (UWBR)
 
 for i in range(0,len(rcvr_data)):
@@ -29,23 +31,27 @@ for i in range(0,len(rcvr_data)):
 #%% Set up data structure - spectral windows
 
 # would like this to mimic structure of above - read from a file rather than hardcode
+# name: [center frequency in GHz, bandwidth in GHz, VEGAS mode]
 spec_win_ghz_dict = {
-    'HI': [1.42,0.02344,10]#,
-    'test': [1.44,0.1875,5],
+    'HI': [1.42,0.02344,10],
+    'test': [1.44,0.1875,5]#,
 #    'fail': [200,1.5,42]
     }
 
 #win_data = np.loadtxt('specwin.csv', delimiter=',',skiprows=1, dtype=np.ndarray) # issues with filetype
 
 #%% Set up data structure - spectral lines
+# name: frequency in GHz
 spec_line_ghz_dict = {
     'HI 1420MHz': 1.4#,
     #'water': 22.24
     }
 
 #%% Set up data structures - VEGAS modes
- # to do later - will need to pull values from GBT Proposer's and Observer's Guides
- 
+# to do later - will need to pull values from GBT Proposer's and Observer's Guides
+# mode: [bandwidth in GHz, usable bandwidth, number of channels, spectral resolution in kHz, number of subbands, subband range]
+vegas_modes_dict = {
+    } 
 
 #%% Define function to determine receiver from spectral window
 def rcvr_select(specwin_dict, rcvr_dict):
@@ -61,8 +67,8 @@ def rcvr_select(specwin_dict, rcvr_dict):
 
     Returns
     -------
-    rcvr_return : list
-        List of unique receivers that the provided spectral windows fall within
+    rcvr_return : dict
+        Dictionary of unique receivers that the provided spectral windows fall within
 
     """
     rcvr_return = {}
@@ -108,16 +114,23 @@ def plot_obs(ax, plot_rcvr=True, rcvr_dict="none", plot_spect=True, specwind_dic
     None.
 
     """
+    prop_cycle = plt.rcParams['axes.prop_cycle']
+    colors = prop_cycle.by_key()['color']
+    
     if plot_spect:
         if specwind_dict == "none":
             print("No spectral windows to plot")
         else:
+            i=0
             for entry in specwind_dict:
+                c = colors[i]
                 cf, bw, mode = specwind_dict[entry]
                 wx1 = cf - (0.5*bw)
                 wx2 = cf + (0.5*bw)
-                ax.fill_between([wx1, wx2],[ploty,ploty], alpha=0.5, label=entry)
-                #ax.plot([wx1,wx2], [ploty/2, ploty/2], label=entry)
+                ax.fill_between([wx1, wx2],[ploty,ploty], alpha=0.5)
+                #ax.plot([wx1,wx2], [ploty/2, ploty/2], color=c, label=entry)
+                ax.vlines(cf, 0, ploty, ls='--', color=c, label=entry)
+                i+=1
         
     if plot_rcvr:
         if rcvr_dict == "none":
@@ -144,33 +157,12 @@ def plot_obs(ax, plot_rcvr=True, rcvr_dict="none", plot_spect=True, specwind_dic
     return
 
  #%%% Scratch work
-fig, ax1 = plt.subplots()
-
-rcvrs = rcvr_select(spec_win_ghz_dict, rcvr_range_ghz_dict)
-
-plot_obs(ax1, plot_rcvr=True, rcvr_dict=rcvrs, plot_spect=True, specwind_dict=spec_win_ghz_dict, plot_line=True, line_dict=spec_line_ghz_dict)
-
-#%% Plotting
-
-toplot = ['Rcvr1_2', 'Rcvr2_3', 'Rcvr4_6']
-
-#toplot = rcvr_range_ghz_dict.keys()
 
 fig, ax1 = plt.subplots()
 ax1.set_xlabel('Frequecy in GHz')
-ax1.set_xscale('log')
+#ax1.set_xscale('log')
 ax1.set_ylabel('arbitrary units')
 
+rcvrs = rcvr_select(spec_win_ghz_dict, rcvr_range_ghz_dict)
 
-for rcvr in toplot:
-    rx1, rx2 = rcvr_range_ghz_dict[rcvr]
-    rxbw = rx2-rx1
-    #ax1.fill_betweenx([0,1], x1, x2, label=rcvr)
-    #ax1.plot([x1,x2], [0, 0], label=rcvr)
-    #ax1.text(x1, 0, rcvr)
-    
-    ax1.vlines([rx1, rx2], [0,0], [1,1],ls='--',color='k',alpha=0.5)
-    ax1.text((rxbw/2)+rx1, 0, rcvr, ha='center')
-    
-ax1.plot()
-#ax1.legend()
+plot_obs(ax1, plot_rcvr=True, rcvr_dict=rcvrs, plot_spect=True, specwind_dict=spec_win_ghz_dict, plot_line=False, line_dict=spec_line_ghz_dict)
