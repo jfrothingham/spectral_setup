@@ -15,7 +15,7 @@ import numpy as np
 import os
 
 #%% Set up data structures - receiver ranges
-# receiver data downloaded from https://alda.gb.nrao.edu/receiver/receivers (internal GBO tool)
+# receiver data downloaded from alda (internal GBO tool)
 
 # name: [minimum frequency in GHz, maximum frequency in GHz]
 rcvr_range_ghz_dict = {}
@@ -31,10 +31,10 @@ for i in range(0,len(rcvr_data)):
 #%% Set up data structure - spectral windows
 
 # would like this to mimic structure of above - read from a file rather than hardcode
-# name: [center frequency in GHz, bandwidth in GHz, VEGAS mode]
+# name: [center frequency in GHz, bandwidth in GHz]
 spec_win_ghz_dict = {
-    'HI': [1.42,0.02344,10],
-    'test': [1.44,0.1875,5]#,
+    'HI': [1.42,0.02344],
+    'test': [1.44,0.1875]#,
 #    'fail': [200,1.5,42]
     }
 
@@ -51,6 +51,25 @@ spec_line_ghz_dict = {
 # to do later - will need to pull values from GBT Proposer's and Observer's Guides
 # mode: [bandwidth in GHz, usable bandwidth, number of channels, spectral resolution in kHz, number of subbands, subband range]
 vegas_modes_dict = {
+    1: [1.5, 1.25, 1024, 1465.00, 1, 1.25],
+    2: [1.5, 1.25, 16384, 92.00, 1, 1.25],
+    3: [1.08, 0.8, 16384, 66.0, 1, 0.8],
+    4: [0.1875, 0.1875, 32768, 5.70, 1, 0.1875],
+    5: [0.1875, 0.1875, 65536, 2.90, 1, 0.1875],
+    6: [0.1875, 0.1875, 131072, 1.40, 1, 0.1875],
+    7: [0.1, 0.1, 32768, 3.1, 1, 0.1],
+    8: [0.1, 0.1, 65536, 1.5, 1, 0.1],
+    9: [0.1, 0.1, 131072, 0.8, 1, 0.1],
+    10: [0.02344, 0.02344, 32768, 0.7, 1, 0.02344],
+    11: [0.02344, 0.02344, 65536, 0.4, 1, 0.02344], 
+    12: [0.02344, 0.02344, 131072, 0.2, 1, 0.02344],
+    13: [0.02344, 0.02344, 262144, 0.1, 1, 0.02344],
+    14: [0.02344, 0.02344, 524288, 0.04, 1, 0.02344],
+    15: [0.01172, 0.01172, 32768, 0.4, 1, 0.01172],
+    16: [0.01172, 0.01172, 65536, 0.2, 1, 0.01172],
+    17: [0.01172, 0.01172, 131072, 0.1, 1, 0.01172], 
+    18: [0.01172, 0.01172, 262144, 0.04, 1, 0.01172],
+    19: [0.01172, 0.01172, 524288, 0.02, 1, 0.01172]
     } 
 
 #%% Define function to determine receiver from spectral window
@@ -124,7 +143,7 @@ def plot_obs(ax, plot_rcvr=True, rcvr_dict="none", plot_spect=True, specwind_dic
             i=0
             for entry in specwind_dict:
                 c = colors[i]
-                cf, bw, mode = specwind_dict[entry]
+                cf, bw = specwind_dict[entry]
                 wx1 = cf - (0.5*bw)
                 wx2 = cf + (0.5*bw)
                 ax.fill_between([wx1, wx2],[ploty,ploty], alpha=0.5)
@@ -165,4 +184,4 @@ ax1.set_ylabel('arbitrary units')
 
 rcvrs = rcvr_select(spec_win_ghz_dict, rcvr_range_ghz_dict)
 
-plot_obs(ax1, plot_rcvr=True, rcvr_dict=rcvrs, plot_spect=True, specwind_dict=spec_win_ghz_dict, plot_line=False, line_dict=spec_line_ghz_dict)
+plot_obs(ax1, plot_rcvr=False, rcvr_dict=rcvrs, plot_spect=True, specwind_dict=spec_win_ghz_dict, plot_line=True, line_dict=spec_line_ghz_dict)
