@@ -91,9 +91,10 @@ def plot_obs(ax, plot_rcvr=True, rcvr_dict="none", plot_spect=True, specwind_dic
                 cf, bw = specwind_dict[entry]
                 wx1 = cf - (0.5*bw)
                 wx2 = cf + (0.5*bw)
-                ax.fill_between([wx1, wx2],[ploty,ploty], alpha=0.5)
-                #ax.plot([wx1,wx2], [ploty/2, ploty/2], color=c, label=entry)
-                ax.vlines(cf, 0, ploty, ls='--', color=c, label=entry)
+                ploty=i+1
+                #ax.fill_between([wx1, wx2],[ploty,ploty], alpha=0.5)
+                ax.plot([wx1,wx2], [ploty, ploty], color=c, label=entry)
+                ax.vlines(cf, ploty-0.5, ploty+0.5, ls='--', color=c)
                 i+=1
         
     if plot_rcvr:
@@ -129,4 +130,19 @@ ax1.set_ylabel('arbitrary units')
 
 rcvrs = rcvr_select(spec_win_ghz_dict, rcvr_range_ghz_dict)
 
-plot_obs(ax1, plot_rcvr=True, rcvr_dict=rcvrs, plot_spect=True, specwind_dict=spec_win_ghz_dict, plot_line=True, line_dict=spec_line_ghz_dict)
+plot_obs(ax1, plot_rcvr=False, rcvr_dict=rcvrs, plot_spect=True, specwind_dict=spec_win_ghz_dict, plot_line=False)
+
+win_min = 0.673605
+win_max = 0.769491
+ax1.vlines(win_min, 0,10,ls='--',color='k')
+ax1.vlines(win_max,0,10,ls='--',color='k')
+
+win_cntr = win_min + ((win_max - win_min)*0.5)
+
+mode_bw = 1.25
+
+mode_min = win_cntr - (0.5*mode_bw)
+mode_max = win_cntr + (0.5*mode_bw)
+
+ax1.vlines(mode_min, 0, 10, color='k')
+ax1.vlines(mode_max, 0, 10, color='k')

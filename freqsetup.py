@@ -27,9 +27,14 @@ for i in range(0,len(rcvr_data)):
 # would like this to mimic structure of above - read from a file rather than hardcode
 # name: [center frequency in GHz, bandwidth in GHz]
 spec_win_ghz_dict = {
-    'HI': [1.42,0.02344],
-    'test': [1.44,0.1875]#,
-#    'fail': [200,1.5,42]
+    'b1l1': [0.685325,0.02344],
+    'b1l2': [0.695092,0.02344],
+    'b1l3': [0.705045,0.02344],
+    'b1l4': [0.715190,0.02344],
+    'b1l5': [0.725530,0.02344],
+    'b1l6': [0.736070,0.02344],
+    'b1l7': [0.746816,0.02344],
+    'b1l8': [0.757771,0.02344],
     }
 
 #win_data = np.loadtxt('specwin.csv', delimiter=',',skiprows=1, dtype=np.ndarray) # issues with filetype
