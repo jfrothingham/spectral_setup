@@ -130,19 +130,4 @@ ax1.set_ylabel('arbitrary units')
 
 rcvrs = rcvr_select(spec_win_ghz_dict, rcvr_range_ghz_dict)
 
-plot_obs(ax1, plot_rcvr=False, rcvr_dict=rcvrs, plot_spect=True, specwind_dict=spec_win_ghz_dict, plot_line=False)
-
-win_min = 0.673605
-win_max = 0.769491
-ax1.vlines(win_min, 0,10,ls='--',color='k')
-ax1.vlines(win_max,0,10,ls='--',color='k')
-
-win_cntr = win_min + ((win_max - win_min)*0.5)
-
-mode_bw = 1.25
-
-mode_min = win_cntr - (0.5*mode_bw)
-mode_max = win_cntr + (0.5*mode_bw)
-
-ax1.vlines(mode_min, 0, 10, color='k')
-ax1.vlines(mode_max, 0, 10, color='k')
+plot_obs(ax1, plot_rcvr=True, rcvr_dict=rcvrs, plot_spect=True, specwind_dict=spec_win_ghz_dict, plot_line=False)

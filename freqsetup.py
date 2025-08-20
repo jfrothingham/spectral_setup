@@ -25,16 +25,16 @@ for i in range(0,len(rcvr_data)):
 #%% Set up data structure - spectral windows
 
 # would like this to mimic structure of above - read from a file rather than hardcode
-# name: [center frequency in GHz, bandwidth in GHz]
+# name: [center frequency in GHz, bandwidth in GHz, vegas mode, vegas bank]
 spec_win_ghz_dict = {
-    'b1l1': [0.685325,0.02344],
-    'b1l2': [0.695092,0.02344],
-    'b1l3': [0.705045,0.02344],
-    'b1l4': [0.715190,0.02344],
-    'b1l5': [0.725530,0.02344],
-    'b1l6': [0.736070,0.02344],
-    'b1l7': [0.746816,0.02344],
-    'b1l8': [0.757771,0.02344],
+    'b1l1': [0.68,0.02344],
+    'b1l2': [0.71,0.02344],
+    'b1l3': [0.74,0.02344],
+    'b1l4': [0.77,0.02344],
+    'b1l5': [0.8,0.02344],
+    'b1l6': [0.83,0.02344],
+    'b1l7': [0.86,0.02344],
+    'b1l8': [0.89,0.02344],
     }
 
 #win_data = np.loadtxt('specwin.csv', delimiter=',',skiprows=1, dtype=np.ndarray) # issues with filetype
