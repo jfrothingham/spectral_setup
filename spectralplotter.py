@@ -100,7 +100,7 @@ def lines_to_windows(line_dict, modeID, mode_dict):
         
 
 #%% Define custom plotting method
-def plot_obs(ax, plot_rcvr=True, rcvr_dict="none", plot_spect=True, specwind_dict="none", plot_line=True, line_dict="none", legend=True, ploty=1):
+def plot_obs(ax, plot_rcvr=True, rcvr_dict="none", plot_spect=True, specwind_dict="none", plot_line=True, line_dict="none", legend=True, ploty=1, vert='stack'):
     """
     
 
@@ -139,7 +139,9 @@ def plot_obs(ax, plot_rcvr=True, rcvr_dict="none", plot_spect=True, specwind_dic
                 cf, bw = specwind_dict[entry]
                 wx1 = cf - (0.5*bw)
                 wx2 = cf + (0.5*bw)
-                ploty=i+1
+                if(vert=='alternate'):
+                    ploty=(-1)**i
+                else: ploty = i+1
                 #ax.fill_between([wx1, wx2],[ploty,ploty], alpha=0.5)
                 ax.plot([wx1,wx2], [ploty, ploty], color=c, label=entry)
                 ax.vlines(cf, ploty-0.5, ploty+0.5, ls='--', color=c)
@@ -175,9 +177,10 @@ fig, ax1 = plt.subplots()
 ax1.set_xlabel('Frequecy in GHz')
 #ax1.set_xscale('log')
 ax1.set_ylabel('arbitrary units')
+#ax1.set_ylim(-5,5)
 
 test_spectwindict = lines_to_windows(spec_line_ghz_dict, 21, vegas_modes_dict)
 
 #rcvrs = rcvr_select(test_spectwindict, rcvr_range_ghz_dict)
 
-plot_obs(ax1, plot_rcvr=False, plot_spect=True, specwind_dict=test_spectwindict, plot_line=False)
+plot_obs(ax1, plot_rcvr=False, plot_spect=True, specwind_dict=test_spectwindict, plot_line=False, vert='aaaaa')
