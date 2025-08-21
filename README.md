@@ -16,4 +16,4 @@ Run function `plot_obs()` to plot a visualization of the spectral windows.
 ### Notes
 Function `rcvr_select()` determines which receiver range will include the desired spectral lines (or windows)
 No support (yet!) for multi-bank VEGAS modes. You can use a workaround by defining a different spectral line dictionary for each bank.
-You can manually create your own spectral window dictionary (bypassing `lines_to_windows()`). It will not undergo any validation. The dictionary must have `key:value` pairs in the form `'name': [center frequency in GHz, bandwidth in GHz, vegas mode, vegas bank]`
+You can manually create your own spectral window dictionary (bypassing `lines_to_windows()`). It will not undergo any validation. The dictionary must have `key:value` pairs in the form `'name': [center frequency in GHz, bandwidth in GHz]`
