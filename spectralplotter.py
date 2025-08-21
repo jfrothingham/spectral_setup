@@ -51,6 +51,54 @@ def rcvr_select(specwin_dict, rcvr_dict):
             
     return rcvr_return
 
+#%% Define function to generate spectral window dictionary from spectral line dictionary and VEGAS mode
+def lines_to_windows(line_dict, modeID, mode_dict):
+    """
+    
+
+    Parameters
+    ----------
+    line_dict : TYPE
+        DESCRIPTION.
+    modeID : TYPE
+        DESCRIPTION.
+    mode_dict : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    None.
+
+    """
+    wind_return = {}
+    center_freqs = []
+    
+    bw, use_bw, nchan, specres, n_sb, sb_range = mode_dict[modeID]
+    
+    for entry in line_dict.keys():
+        cf = line_dict[entry]
+        wind_return[entry] = [cf, bw]
+        center_freqs.append(cf)
+    
+    min_freq = min(center_freqs) - (0.5*bw)
+    max_freq = max(center_freqs) + (0.5*bw)
+    freq_range = max_freq - min_freq
+    
+    if freq_range > sb_range:
+        print("Your windows do not all fit within the available bandwidth! Your windows span", freq_range, "GHz. They must all fit within", sb_range, "GHz")
+        print("Try adjusting center frequency values, choosing a different VEGAS mode, or using a multi-bank setup.")
+        # intentionally do not exit the function here - still want to be able to plot windows, as that can help inform updated setup
+    
+    if len(line_dict.keys()) > n_sb:
+        print("Too many spectral windows for your desired VEGAS mode! You have", len(line_dict.keys()), "lines and ", n_sb, "windows available in this mode.")
+        print("Try removing some windows, choosing a different VEGAS mode, or using a multi-bank setup.")
+        return
+    
+
+    return wind_return
+
+        
+
 #%% Define custom plotting method
 def plot_obs(ax, plot_rcvr=True, rcvr_dict="none", plot_spect=True, specwind_dict="none", plot_line=True, line_dict="none", legend=True, ploty=1):
     """
@@ -128,6 +176,8 @@ ax1.set_xlabel('Frequecy in GHz')
 #ax1.set_xscale('log')
 ax1.set_ylabel('arbitrary units')
 
-rcvrs = rcvr_select(spec_win_ghz_dict, rcvr_range_ghz_dict)
+test_spectwindict = lines_to_windows(spec_line_ghz_dict, 21, vegas_modes_dict)
 
-plot_obs(ax1, plot_rcvr=True, rcvr_dict=rcvrs, plot_spect=True, specwind_dict=spec_win_ghz_dict, plot_line=False)
+#rcvrs = rcvr_select(test_spectwindict, rcvr_range_ghz_dict)
+
+plot_obs(ax1, plot_rcvr=False, plot_spect=True, specwind_dict=test_spectwindict, plot_line=False)

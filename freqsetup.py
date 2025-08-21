@@ -42,8 +42,16 @@ spec_win_ghz_dict = {
 #%% Set up data structure - spectral lines
 # name: frequency in GHz
 spec_line_ghz_dict = {
-    'HI 1420MHz': 1.4#,
-    #'water': 22.24
+    #'1.0GHz': 1.0,
+    '12GHz': 12.12,
+    '13GHz': 12.13,
+    '14GHz': 12.14,
+    '15GHz': 12.15,
+    '16GHz': 12.16,
+    '17GHz': 12.17,
+    '18GHz': 12.18#,
+    #'19GHz': 19#,
+    #'2.0GHz': 2.0
     }
 
 #%% Set up data structures - VEGAS modes
